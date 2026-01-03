@@ -39,16 +39,17 @@ export default function AddLinkForm() {
     setShowSuccess(false);
 
     startTransition(async () => {
-      try {
-        await createLink(url, title || undefined);
+      const result = await createLink(url, title || undefined);
+
+      if (result.ok) {
         setUrl("");
         setTitle("");
         setShowSuccess(true);
         setTimeout(() => setShowSuccess(false), 1500);
         // Return focus to URL input for quick consecutive saves
         setTimeout(() => urlInputRef.current?.focus(), 100);
-      } catch (e: any) {
-        setUrlError(e?.message ?? "Failed to save");
+      } else {
+        setUrlError(result.error ?? "Failed to save");
       }
     });
   };

@@ -4,27 +4,44 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { getOwnerKey } from "@/lib/owner-key";
 
-export async function createLink(url: string, title?: string) {
-  const clean = (url || "").trim();
-  if (!clean) throw new Error("URL is required");
+export async function createLink(url: string, title?: string): Promise<{ ok: boolean; error?: string }> {
+  try {
+    const clean = (url || "").trim();
+    if (!clean) return { ok: false, error: "URL is required" };
 
-  const cleanTitle = title?.trim() || null;
-  const ownerKey = await getOwnerKey();
+    const cleanTitle = title?.trim() || null;
+    const ownerKey = await getOwnerKey();
 
-  const link = await prisma.link.create({
-    data: {
-      url: clean,
-      title: cleanTitle,
-      status: "SAVED",
-      ownerKey,
-    },
-  });
+    await prisma.link.create({
+      data: {
+        url: clean,
+        title: cleanTitle,
+        status: "SAVED",
+        ownerKey,
+      },
+    });
 
-  // refresh pages that show lists
-  revalidatePath("/");
-  revalidatePath("/library");
+    // refresh pages that show lists
+    revalidatePath("/");
+    revalidatePath("/library");
 
-  return link;
+    return { ok: true };
+  } catch (error: any) {
+    // Handle duplicate url+ownerKey constraint violation
+    if (error?.code === "P2002") {
+      return { ok: false, error: "Already saved" };
+    }
+
+    // Handle Prisma validation errors
+    if (error?.name === "PrismaClientValidationError") {
+      console.error("PrismaClientValidationError in createLink:", error);
+      return { ok: false, error: "Unable to save link" };
+    }
+
+    // Handle all other unknown errors
+    console.error("Unknown error in createLink:", error);
+    return { ok: false, error: "Unable to save link" };
+  }
 }
 
 export async function listLinks() {
