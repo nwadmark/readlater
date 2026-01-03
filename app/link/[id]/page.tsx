@@ -7,6 +7,9 @@ import { DeleteLinkButton } from "@/components/delete-link-button";
 import { StatusSelector } from "@/components/status-selector";
 import { ShareButton } from "@/components/share-button";
 
+// Force dynamic rendering - do not cache across users
+export const dynamic = "force-dynamic";
+
 function formatDate(d: Date) {
   return d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
 }

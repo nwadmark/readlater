@@ -9,6 +9,9 @@ import { ShareButton } from "@/components/share-button";
 import { LinkFavicon } from "@/components/link-favicon";
 import { Bookmark } from "lucide-react";
 
+// Force dynamic rendering - do not cache across users
+export const dynamic = "force-dynamic";
+
 function formatDate(d: Date) {
   return d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
 }
