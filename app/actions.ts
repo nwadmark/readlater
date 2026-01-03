@@ -14,10 +14,12 @@ export async function createLink(url: string, title?: string): Promise<{ ok: boo
 
     await prisma.link.create({
       data: {
+        id: crypto.randomUUID(),
         url: clean,
         title: cleanTitle,
         status: "SAVED",
         ownerKey,
+        updatedAt: new Date(),
       },
     });
 
