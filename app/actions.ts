@@ -3,6 +3,8 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { getOwnerKey } from "@/lib/owner-key";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export async function createLink(url: string, title?: string): Promise<{ ok: boolean; error?: string }> {
   try {
@@ -10,6 +12,7 @@ export async function createLink(url: string, title?: string): Promise<{ ok: boo
     if (!clean) return { ok: false, error: "URL is required" };
 
     const cleanTitle = title?.trim() || null;
+    const session = await getServerSession(authOptions);
     const ownerKey = await getOwnerKey();
 
     await prisma.link.create({
@@ -19,6 +22,7 @@ export async function createLink(url: string, title?: string): Promise<{ ok: boo
         title: cleanTitle,
         status: "SAVED",
         ownerKey,
+        userId: session?.user?.id || null,
         updatedAt: new Date(),
       },
     });
@@ -47,32 +51,42 @@ export async function createLink(url: string, title?: string): Promise<{ ok: boo
 }
 
 export async function listLinks() {
+  const session = await getServerSession(authOptions);
   const ownerKey = await getOwnerKey();
 
+  // If user is signed in, fetch by userId; otherwise, fetch by ownerKey
   return prisma.link.findMany({
-    where: { ownerKey },
+    where: session?.user?.id
+      ? { userId: session.user.id }
+      : { ownerKey, userId: null },
     orderBy: { createdAt: "desc" },
   });
 }
 
 export async function getLink(id: string) {
+  const session = await getServerSession(authOptions);
   const ownerKey = await getOwnerKey();
 
-  return prisma.link.findUnique({
+  return prisma.link.findFirst({
     where: {
       id,
-      ownerKey,
+      ...(session?.user?.id
+        ? { userId: session.user.id }
+        : { ownerKey, userId: null }),
     },
   });
 }
 
 export async function updateLinkStatus(id: string, status: "SAVED" | "IN_PROGRESS" | "FINISHED") {
+  const session = await getServerSession(authOptions);
   const ownerKey = await getOwnerKey();
 
-  const link = await prisma.link.update({
+  const link = await prisma.link.updateMany({
     where: {
       id,
-      ownerKey,
+      ...(session?.user?.id
+        ? { userId: session.user.id }
+        : { ownerKey, userId: null }),
     },
     data: { status },
   });
@@ -85,12 +99,15 @@ export async function updateLinkStatus(id: string, status: "SAVED" | "IN_PROGRES
 }
 
 export async function updateLinkTitle(id: string, title: string) {
+  const session = await getServerSession(authOptions);
   const ownerKey = await getOwnerKey();
 
-  const link = await prisma.link.update({
+  const link = await prisma.link.updateMany({
     where: {
       id,
-      ownerKey,
+      ...(session?.user?.id
+        ? { userId: session.user.id }
+        : { ownerKey, userId: null }),
     },
     data: {
       title: title.trim() || null,
@@ -106,12 +123,15 @@ export async function updateLinkTitle(id: string, title: string) {
 }
 
 export async function deleteLink(id: string) {
+  const session = await getServerSession(authOptions);
   const ownerKey = await getOwnerKey();
 
-  await prisma.link.delete({
+  await prisma.link.deleteMany({
     where: {
       id,
-      ownerKey,
+      ...(session?.user?.id
+        ? { userId: session.user.id }
+        : { ownerKey, userId: null }),
     },
   });
 
