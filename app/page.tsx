@@ -8,6 +8,8 @@ import { StatusSelector } from "@/components/status-selector";
 import { ShareButton } from "@/components/share-button";
 import { LinkFavicon } from "@/components/link-favicon";
 import { Bookmark } from "lucide-react";
+import SignInButton from "@/components/auth/sign-in-button";
+import { EditableTitle } from "@/components/editable-title";
 
 // Force dynamic rendering - do not cache across users
 export const dynamic = "force-dynamic";
@@ -34,10 +36,10 @@ export default async function HomePage() {
           <h1 className="mb-2 text-[2.5rem] md:text-[3.5rem] font-extralight tracking-tight text-foreground leading-none">
             ReadLater
           </h1>
-          <p className="mb-6 text-[0.875rem] md:text-[0.9375rem] text-foreground/45 font-light whitespace-nowrap">
+          <p className="mb-6 text-[0.875rem] md:text-[0.9375rem] text-[#6b7280] font-light whitespace-nowrap">
             Curate Your Curiosity
           </p>
-          <nav className="flex justify-center gap-8">
+          <nav className="flex justify-center items-center gap-8">
             <Link href="/" className="text-[0.875rem] font-medium text-primary transition-colors">
               Home
             </Link>
@@ -47,6 +49,7 @@ export default async function HomePage() {
             >
               Library
             </Link>
+            <SignInButton />
           </nav>
         </header>
 
@@ -65,7 +68,7 @@ export default async function HomePage() {
               <p className="mt-3 text-[1rem] font-medium text-[#666666]">
                 No saved links yet
               </p>
-              <p className="mt-1.5 text-[0.875rem] text-[#999999]">
+              <p className="mt-1.5 text-[0.875rem] text-[#6b7280]">
                 Paste a URL above to save your first link
               </p>
             </div>
@@ -87,12 +90,15 @@ export default async function HomePage() {
                         currentStatus={link.status}
                         className="block"
                       >
-                        <h3 className="text-[1.0625rem] font-semibold leading-snug text-balance text-foreground group-hover:text-primary transition-colors">
-                          {link.title ?? link.url}
-                        </h3>
+                        <EditableTitle
+                          linkId={link.id}
+                          title={link.title}
+                          url={link.url}
+                          className="text-[1.0625rem] font-semibold leading-snug text-balance text-foreground group-hover:text-primary transition-colors"
+                        />
                       </LinkOpener>
 
-                      <div className="flex items-center gap-2 text-[0.75rem] text-foreground/40 font-normal">
+                      <div className="flex items-center gap-2 text-[0.75rem] text-[#6b7280] font-normal">
                         <span>{hostname(link.url)}</span>
                         <span>·</span>
                         <span>{formatDate(link.createdAt)}</span>
@@ -101,12 +107,6 @@ export default async function HomePage() {
                       {link.synopsis && (
                         <p className="text-[0.875rem] leading-relaxed text-[#666666] font-normal line-clamp-2">
                           {link.synopsis.length > 120 ? `${link.synopsis.slice(0, 120)}...` : link.synopsis}
-                        </p>
-                      )}
-
-                      {!link.synopsis && (
-                        <p className="text-[0.875rem] leading-relaxed text-foreground/35 italic font-light animate-pulse">
-                          Synopsis generating...
                         </p>
                       )}
                     </div>

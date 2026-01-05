@@ -2,15 +2,26 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
+import { Providers } from "@/components/providers"
 import "./globals.css"
 
 const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "ReadLater - Save Links and Get Summaries",
-  description: "Save links and get quick summaries to read later",
+  title: "ReadLater — Curate Your Curiosity",
+  description: "A calm place to save and organize links you want to read later.",
   generator: "v0.app",
+  openGraph: {
+    title: "ReadLater — Curate Your Curiosity",
+    description: "A calm place to save and organize links you want to read later.",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "ReadLater — Curate Your Curiosity",
+    description: "A calm place to save and organize links you want to read later.",
+  },
   icons: {
     icon: [
       {
@@ -38,10 +49,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`font-sans antialiased`}>
-        {children}
-        <footer className="py-12 text-center">
-          <p className="text-sm text-neutral-400">ReadLater — a calm place to think.</p>
-        </footer>
+        <Providers>
+          {children}
+          <footer className="py-8 text-center">
+            <p className="text-sm text-[#6b7280]">ReadLater — a calm place to think.</p>
+          </footer>
+        </Providers>
         <Analytics />
       </body>
     </html>

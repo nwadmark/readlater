@@ -84,6 +84,27 @@ export async function updateLinkStatus(id: string, status: "SAVED" | "IN_PROGRES
   return link;
 }
 
+export async function updateLinkTitle(id: string, title: string) {
+  const ownerKey = await getOwnerKey();
+
+  const link = await prisma.link.update({
+    where: {
+      id,
+      ownerKey,
+    },
+    data: {
+      title: title.trim() || null,
+      updatedAt: new Date(),
+    },
+  });
+
+  revalidatePath("/");
+  revalidatePath("/library");
+  revalidatePath(`/link/${id}`);
+
+  return link;
+}
+
 export async function deleteLink(id: string) {
   const ownerKey = await getOwnerKey();
 

@@ -29,8 +29,14 @@ export default function AddLinkForm() {
   const handleSave = () => {
     if (!url.trim()) return;
 
+    // Auto-add https:// if missing
+    let processedUrl = url.trim();
+    if (!processedUrl.match(/^https?:\/\//i)) {
+      processedUrl = `https://${processedUrl}`;
+    }
+
     // Validate URL
-    if (!isValidUrl(url.trim())) {
+    if (!isValidUrl(processedUrl)) {
       setUrlError("Please enter a valid URL");
       return;
     }
@@ -39,7 +45,7 @@ export default function AddLinkForm() {
     setShowSuccess(false);
 
     startTransition(async () => {
-      const result = await createLink(url, title || undefined);
+      const result = await createLink(processedUrl, title || undefined);
 
       if (result.ok) {
         setUrl("");
@@ -67,7 +73,7 @@ export default function AddLinkForm() {
           <h2 className="text-[1.5rem] md:text-[1.75rem] font-extralight tracking-tight text-foreground leading-tight">
             What would you like to save?
           </h2>
-          <p className="text-[0.875rem] text-[#888888]">
+          <p className="text-[0.875rem] text-[#6b7280]">
             Add a link and optionally give it a descriptive title
           </p>
         </div>

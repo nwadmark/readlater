@@ -38,7 +38,26 @@ export function ShareButton({ url, title, variant = "icon" }: ShareButtonProps) 
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error("Failed to copy:", err);
+      // Fallback for browsers that don't support clipboard API or when permission is denied
+      try {
+        const textArea = document.createElement("textarea");
+        textArea.value = url;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        const successful = document.execCommand("copy");
+        document.body.removeChild(textArea);
+        if (successful) {
+          setCopied(true);
+          setTimeout(() => setCopied(false), 2000);
+        }
+      } catch (fallbackErr) {
+        // Silent fail - could show a toast notification here in the future
+        console.error("Failed to copy to clipboard:", fallbackErr);
+      }
     }
   };
 

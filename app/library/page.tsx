@@ -1,26 +1,11 @@
 import Link from "next/link";
 import { listLinks } from "@/app/actions";
-import { DeleteLinkButton } from "@/components/delete-link-button";
-import { LinkOpener } from "@/components/link-opener";
-import { StatusSelector } from "@/components/status-selector";
-import { ShareButton } from "@/components/share-button";
-import { LinkFavicon } from "@/components/link-favicon";
 import { BookOpen } from "lucide-react";
+import SignInButton from "@/components/auth/sign-in-button";
+import LibraryContent from "@/components/library-content";
 
 // Force dynamic rendering - do not cache across users
 export const dynamic = "force-dynamic";
-
-function formatDate(d: Date) {
-  return d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
-}
-
-function hostname(url: string) {
-  try {
-    return new URL(url).hostname.replace("www.", "");
-  } catch {
-    return url;
-  }
-}
 
 export default async function LibraryPage() {
   const links = await listLinks();
@@ -33,16 +18,19 @@ export default async function LibraryPage() {
             <h1 className="text-[2rem] md:text-[2.5rem] font-extralight tracking-tight text-foreground">
               Library
             </h1>
-            <nav className="flex gap-8">
-              <Link href="/" className="text-[0.875rem] font-medium text-foreground/40 hover:text-primary transition-colors">
-                Home
-              </Link>
-              <Link href="/library" className="text-[0.875rem] font-medium text-primary transition-colors">
-                Library
-              </Link>
-            </nav>
+            <div className="flex items-center gap-6">
+              <nav className="flex gap-8">
+                <Link href="/" className="text-[0.875rem] font-medium text-foreground/40 hover:text-primary transition-colors">
+                  Home
+                </Link>
+                <Link href="/library" className="text-[0.875rem] font-medium text-primary transition-colors">
+                  Library
+                </Link>
+              </nav>
+              <SignInButton />
+            </div>
           </div>
-          <p className="text-[0.875rem] text-foreground/45 font-light">
+          <p className="text-[0.875rem] text-[#6b7280] font-light">
             Everything you've saved.
           </p>
         </header>
@@ -53,7 +41,7 @@ export default async function LibraryPage() {
             <h3 className="mt-5 text-[1.125rem] font-medium text-[#444444]">
               Your library is empty
             </h3>
-            <p className="mt-2 max-w-[320px] mx-auto text-[0.9375rem] leading-relaxed text-[#888888]">
+            <p className="mt-2 max-w-[320px] mx-auto text-[0.9375rem] leading-relaxed text-[#6b7280]">
               Links you save will appear here. You can organize them by status and revisit them anytime.
             </p>
             <Link href="/">
@@ -63,62 +51,7 @@ export default async function LibraryPage() {
             </Link>
           </div>
         ) : (
-          <div className="space-y-3">
-            {links.map((link, index) => (
-              <article
-                key={link.id}
-                className="bg-[#FAFAFA] border border-[#EBEBEB] rounded-lg p-4 transition-all duration-200 hover:shadow-[0_2px_8px_rgba(0,0,0,0.04)] group animate-in fade-in slide-in-from-bottom-2"
-                style={{ animationDelay: `${index * 50}ms`, animationDuration: "300ms", animationFillMode: "both" }}
-              >
-                <div className="flex items-start gap-3">
-                  <LinkFavicon url={link.url} />
-
-                  <div className="flex-1 min-w-0 space-y-1.5">
-                    <LinkOpener
-                      linkId={link.id}
-                      url={link.url}
-                      currentStatus={link.status}
-                      className="block"
-                    >
-                      <h3 className="text-[1.0625rem] font-semibold leading-snug text-balance text-foreground group-hover:text-primary transition-colors">
-                        {link.title ?? link.url}
-                      </h3>
-                    </LinkOpener>
-
-                    <div className="flex items-center gap-2 text-[0.75rem] text-foreground/40 font-normal">
-                      <span>{hostname(link.url)}</span>
-                      <span>·</span>
-                      <span>{formatDate(link.createdAt)}</span>
-                    </div>
-
-                    {link.synopsis && (
-                      <p className="text-[0.875rem] leading-relaxed text-[#666666] font-normal line-clamp-2">
-                        {link.synopsis.length > 120 ? `${link.synopsis.slice(0, 120)}...` : link.synopsis}
-                      </p>
-                    )}
-
-                    {!link.synopsis && (
-                      <p className="text-[0.875rem] leading-relaxed text-foreground/35 italic font-light animate-pulse">
-                        Synopsis generating...
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    <StatusSelector linkId={link.id} currentStatus={link.status} />
-                    <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                      <div className="text-[#999999] hover:text-[#333333] transition-colors">
-                        <ShareButton url={link.url} title={link.title} variant="icon" />
-                      </div>
-                      <div className="text-[#999999] hover:text-[#333333] transition-colors">
-                        <DeleteLinkButton linkId={link.id} variant="icon" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
+          <LibraryContent links={links} />
         )}
       </div>
     </div>
