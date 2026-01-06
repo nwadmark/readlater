@@ -109,7 +109,7 @@ export default function LibraryContent({ links }: LibraryContentProps) {
 
         <div className="flex items-center gap-2 flex-shrink-0">
           <StatusSelector linkId={link.id} currentStatus={link.status} />
-          <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <div className="flex items-center gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-200">
             <div className="text-[#999999] hover:text-[#333333] transition-colors">
               <ShareButton url={link.url} title={link.title} variant="icon" />
             </div>

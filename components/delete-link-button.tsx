@@ -80,9 +80,10 @@ export function DeleteLinkButton({
             size="sm"
             onClick={handleClick}
             disabled={isPending}
-            className="h-auto w-auto p-0 hover:text-red-500 hover:bg-transparent"
+            className="h-10 w-10 p-2 hover:text-red-500 hover:bg-muted/50"
+            title="Delete link"
           >
-            <Trash2 className="size-[18px]" />
+            <Trash2 className="size-5" />
           </Button>
         )}
       </div>

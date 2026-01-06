@@ -67,10 +67,10 @@ export function ShareButton({ url, title, variant = "icon" }: ShareButtonProps) 
         variant="ghost"
         size="sm"
         onClick={handleShare}
-        className="h-auto w-auto p-0 hover:bg-transparent"
+        className="h-10 w-10 p-2 hover:bg-muted/50"
         title="Share link"
       >
-        {copied ? <Check className="size-[18px] text-green-500" /> : <Share2 className="size-[18px]" />}
+        {copied ? <Check className="size-5 text-green-500" /> : <Share2 className="size-5" />}
       </Button>
     );
   }
