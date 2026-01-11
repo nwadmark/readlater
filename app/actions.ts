@@ -5,15 +5,24 @@ import { revalidatePath } from "next/cache";
 import { getOwnerKey } from "@/lib/owner-key";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { fetchPageTitle } from "@/lib/fetch-title";
 
 export async function createLink(url: string, title?: string): Promise<{ ok: boolean; error?: string }> {
   try {
     const clean = (url || "").trim();
     if (!clean) return { ok: false, error: "URL is required" };
 
-    const cleanTitle = title?.trim() || null;
+    let cleanTitle = title?.trim() || null;
     const session = await getServerSession(authOptions);
     const ownerKey = await getOwnerKey();
+
+    // If no title provided, try to fetch it from the page
+    if (!cleanTitle) {
+      const fetchedTitle = await fetchPageTitle(clean);
+      if (fetchedTitle) {
+        cleanTitle = fetchedTitle;
+      }
+    }
 
     await prisma.link.create({
       data: {
