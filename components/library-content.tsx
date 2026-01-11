@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DeleteLinkButton } from "@/components/delete-link-button";
 import { LinkOpener } from "@/components/link-opener";
 import { StatusSelector } from "@/components/status-selector";
 import { ShareButton } from "@/components/share-button";
 import { LinkFavicon } from "@/components/link-favicon";
 import { EditableTitle } from "@/components/editable-title";
-import { ChevronDown, ChevronRight, Search } from "lucide-react";
+import { ChevronDown, ChevronRight, Search, Grid2X2, List } from "lucide-react";
 import type { LinkStatus } from "@prisma/client";
 
 type Link = {
@@ -47,6 +47,22 @@ export default function LibraryContent({ links }: LibraryContentProps) {
     IN_PROGRESS: false,
     FINISHED: false,
   });
+  const [viewMode, setViewMode] = useState<"list" | "grid">("list");
+
+  // Load view mode from localStorage on mount
+  useEffect(() => {
+    const savedViewMode = localStorage.getItem("library-view-mode");
+    if (savedViewMode === "grid" || savedViewMode === "list") {
+      setViewMode(savedViewMode);
+    }
+  }, []);
+
+  // Save view mode to localStorage when it changes
+  const toggleViewMode = () => {
+    const newMode = viewMode === "list" ? "grid" : "list";
+    setViewMode(newMode);
+    localStorage.setItem("library-view-mode", newMode);
+  };
 
   const toggleSection = (status: string) => {
     setExpandedSections((prev) => ({ ...prev, [status]: !prev[status] }));
@@ -74,12 +90,12 @@ export default function LibraryContent({ links }: LibraryContentProps) {
   const renderLinkCard = (link: Link, index: number) => (
     <article
       key={link.id}
-      className="bg-[#FAFAFA] border border-[#EBEBEB] rounded-lg p-4 transition-all duration-200 hover:shadow-[0_2px_8px_rgba(0,0,0,0.04)] group"
+      className="bg-[#FAFAFA] border border-[#EBEBEB] rounded-lg p-3 transition-all duration-200 hover:shadow-[0_2px_8px_rgba(0,0,0,0.04)] group"
     >
-      <div className="flex items-start gap-3">
+      <div className="flex items-start gap-2.5">
         <LinkFavicon url={link.url} />
 
-        <div className="flex-1 min-w-0 space-y-1.5">
+        <div className="flex-1 min-w-0 space-y-1">
           <LinkOpener
             linkId={link.id}
             url={link.url}
@@ -90,31 +106,31 @@ export default function LibraryContent({ links }: LibraryContentProps) {
               linkId={link.id}
               title={link.title}
               url={link.url}
-              className="text-[1.0625rem] font-semibold leading-snug text-balance text-foreground group-hover:text-primary transition-colors"
+              className="text-[0.9375rem] font-semibold leading-snug text-balance text-foreground group-hover:text-primary transition-colors"
             />
           </LinkOpener>
 
-          <div className="flex items-center gap-2 text-[0.75rem] text-[#6b7280] font-normal">
+          <div className="flex items-center gap-2 text-[0.6875rem] text-[#6b7280] font-normal">
             <span>{hostname(link.url)}</span>
             <span>·</span>
             <span>{formatDate(link.createdAt)}</span>
           </div>
 
           {link.synopsis && (
-            <p className="text-[0.875rem] leading-relaxed text-[#666666] font-normal line-clamp-2">
+            <p className="text-[0.8125rem] leading-relaxed text-[#666666] font-normal line-clamp-1">
               {link.synopsis.length > 120 ? `${link.synopsis.slice(0, 120)}...` : link.synopsis}
             </p>
           )}
         </div>
 
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <StatusSelector linkId={link.id} currentStatus={link.status} />
-          <div className="flex items-center gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-200">
+        <div className="flex items-center gap-1.5 flex-shrink-0">
+          <StatusSelector linkId={link.id} currentStatus={link.status} size="sm" />
+          <div className="flex items-center gap-1.5 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-200">
             <div className="text-[#999999] hover:text-[#333333] transition-colors">
-              <ShareButton url={link.url} title={link.title} variant="icon" />
+              <ShareButton url={link.url} title={link.title} variant="icon" size="sm" />
             </div>
             <div className="text-[#999999] hover:text-[#333333] transition-colors">
-              <DeleteLinkButton linkId={link.id} variant="icon" />
+              <DeleteLinkButton linkId={link.id} variant="icon" size="sm" />
             </div>
           </div>
         </div>
@@ -131,15 +147,15 @@ export default function LibraryContent({ links }: LibraryContentProps) {
     const hasMore = sectionLinks.length > 5;
 
     return (
-      <div key={status} className="mb-6">
+      <div key={status} className="mb-5">
         <button
           onClick={() => toggleSection(status)}
-          className="flex items-center gap-2 mb-3 text-[1.25rem] font-medium text-foreground hover:text-primary transition-colors"
+          className="flex items-center gap-2 mb-2.5 text-[1.125rem] font-medium text-foreground hover:text-primary transition-colors"
         >
           {isExpanded ? (
-            <ChevronDown className="size-5" />
+            <ChevronDown className="size-4" />
           ) : (
-            <ChevronRight className="size-5" />
+            <ChevronRight className="size-4" />
           )}
           <span>
             {title} ({sectionLinks.length})
@@ -147,13 +163,13 @@ export default function LibraryContent({ links }: LibraryContentProps) {
         </button>
 
         {isExpanded && (
-          <div className="space-y-3">
+          <div className={viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 gap-2" : "space-y-2"}>
             {displayLinks.map((link, index) => renderLinkCard(link, index))}
 
             {hasMore && (
               <button
                 onClick={() => toggleShowMore(status)}
-                className="w-full py-2 text-sm text-[#6b7280] hover:text-primary transition-colors"
+                className={`w-full py-2 text-sm text-[#6b7280] hover:text-primary transition-colors ${viewMode === "grid" ? "md:col-span-2" : ""}`}
               >
                 {showMore ? "Show less" : `Show ${sectionLinks.length - 5} more`}
               </button>
@@ -166,18 +182,34 @@ export default function LibraryContent({ links }: LibraryContentProps) {
 
   return (
     <>
-      {/* Search Bar */}
-      <div className="mb-8">
-        <div className="relative">
+      {/* Search Bar and View Toggle */}
+      <div className="mb-6 flex items-center gap-3">
+        <div className="relative flex-1">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-[#6b7280]" />
           <input
             type="text"
             placeholder="Search by title or URL..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-12 pl-12 pr-4 text-[0.9375rem] bg-[#FAFAFA] border border-[#E0E0E0] rounded-lg transition-all duration-150 outline-none focus:border-[#3B82F6] focus:bg-white focus:shadow-[0_0_0_3px_rgba(59,130,246,0.1)]"
+            className="w-full h-11 pl-12 pr-4 text-[0.9375rem] bg-[#FAFAFA] border border-[#E0E0E0] rounded-lg transition-all duration-150 outline-none focus:border-[#3B82F6] focus:bg-white focus:shadow-[0_0_0_3px_rgba(59,130,246,0.1)]"
           />
         </div>
+
+        {/* View Mode Toggle */}
+        <button
+          onClick={toggleViewMode}
+          className="flex items-center gap-2 h-11 px-3.5 bg-[#FAFAFA] border border-[#E0E0E0] rounded-lg hover:border-[#3B82F6] hover:bg-white transition-all duration-150"
+          title={viewMode === "list" ? "Switch to grid view" : "Switch to list view"}
+        >
+          {viewMode === "list" ? (
+            <Grid2X2 className="size-4 text-[#6b7280]" />
+          ) : (
+            <List className="size-4 text-[#6b7280]" />
+          )}
+          <span className="text-[0.8125rem] font-medium text-[#6b7280] hidden md:inline">
+            {viewMode === "list" ? "Grid" : "List"}
+          </span>
+        </button>
       </div>
 
       {/* Sections */}

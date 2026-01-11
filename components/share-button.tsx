@@ -8,9 +8,10 @@ interface ShareButtonProps {
   url: string;
   title?: string | null;
   variant?: "icon" | "button";
+  size?: "sm" | "default";
 }
 
-export function ShareButton({ url, title, variant = "icon" }: ShareButtonProps) {
+export function ShareButton({ url, title, variant = "icon", size = "default" }: ShareButtonProps) {
   const [copied, setCopied] = useState(false);
 
   const handleShare = async (e: React.MouseEvent) => {
@@ -62,15 +63,18 @@ export function ShareButton({ url, title, variant = "icon" }: ShareButtonProps) 
   };
 
   if (variant === "icon") {
+    const iconSize = size === "sm" ? "size-4" : "size-5";
+    const buttonSize = size === "sm" ? "h-8 w-8 p-1.5" : "h-10 w-10 p-2";
+
     return (
       <Button
         variant="ghost"
         size="sm"
         onClick={handleShare}
-        className="h-10 w-10 p-2 hover:bg-muted/50"
+        className={`${buttonSize} hover:bg-muted/50`}
         title="Share link"
       >
-        {copied ? <Check className="size-5 text-green-500" /> : <Share2 className="size-5" />}
+        {copied ? <Check className={`${iconSize} text-green-500`} /> : <Share2 className={iconSize} />}
       </Button>
     );
   }

@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 interface DeleteLinkButtonProps {
   linkId: string;
   variant?: "icon" | "button";
+  size?: "sm" | "default";
   redirectAfterDelete?: string;
   onDeleteStart?: () => void;
 }
@@ -16,6 +17,7 @@ interface DeleteLinkButtonProps {
 export function DeleteLinkButton({
   linkId,
   variant = "icon",
+  size = "default",
   redirectAfterDelete,
   onDeleteStart,
 }: DeleteLinkButtonProps) {
@@ -51,6 +53,10 @@ export function DeleteLinkButton({
   };
 
   if (variant === "icon") {
+    const iconSize = size === "sm" ? "size-4" : "size-5";
+    const buttonSize = size === "sm" ? "h-8 w-8 p-1.5" : "h-10 w-10 p-2";
+    const confirmSize = size === "sm" ? "h-6 px-1.5 text-[0.6875rem]" : "h-7 px-2 text-xs";
+
     return (
       <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
         {showConfirm ? (
@@ -60,7 +66,7 @@ export function DeleteLinkButton({
               size="sm"
               onClick={handleClick}
               disabled={isPending}
-              className="h-7 px-2 text-xs text-red-500 hover:text-red-600 hover:bg-red-50"
+              className={`${confirmSize} text-red-500 hover:text-red-600 hover:bg-red-50`}
             >
               {isPending ? "Deleting..." : "Confirm"}
             </Button>
@@ -69,7 +75,7 @@ export function DeleteLinkButton({
               size="sm"
               onClick={handleCancel}
               disabled={isPending}
-              className="h-7 px-2 text-xs text-foreground/40 hover:text-foreground"
+              className={`${confirmSize} text-foreground/40 hover:text-foreground`}
             >
               Cancel
             </Button>
@@ -80,10 +86,10 @@ export function DeleteLinkButton({
             size="sm"
             onClick={handleClick}
             disabled={isPending}
-            className="h-10 w-10 p-2 hover:text-red-500 hover:bg-muted/50"
+            className={`${buttonSize} hover:text-red-500 hover:bg-muted/50`}
             title="Delete link"
           >
-            <Trash2 className="size-5" />
+            <Trash2 className={iconSize} />
           </Button>
         )}
       </div>

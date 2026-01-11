@@ -13,9 +13,10 @@ import { ChevronDown } from "lucide-react";
 interface StatusSelectorProps {
   linkId: string;
   currentStatus: "SAVED" | "IN_PROGRESS" | "FINISHED";
+  size?: "sm" | "default";
 }
 
-export function StatusSelector({ linkId, currentStatus }: StatusSelectorProps) {
+export function StatusSelector({ linkId, currentStatus, size = "default" }: StatusSelectorProps) {
   const [isPending, startTransition] = useTransition();
 
   const statusConfig = {
@@ -34,17 +35,23 @@ export function StatusSelector({ linkId, currentStatus }: StatusSelectorProps) {
     });
   };
 
+  const buttonSize = size === "sm"
+    ? "px-2 py-0.5 text-[0.75rem]"
+    : "px-2.5 py-1 text-[0.8125rem]";
+  const dotSize = size === "sm" ? "size-1" : "size-1.5";
+  const chevronSize = size === "sm" ? "size-2.5" : "size-3";
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
-          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-background border border-border/40 hover:border-border/80 transition-all duration-200 text-[0.8125rem] font-medium text-foreground/70"
+          className={`inline-flex items-center gap-1.5 ${buttonSize} rounded-full bg-background border border-border/40 hover:border-border/80 transition-all duration-200 font-medium text-foreground/70`}
           disabled={isPending}
           onClick={(e) => e.stopPropagation()}
         >
-          <span className={`size-1.5 rounded-full ${config.bgColor}`} />
+          <span className={`${dotSize} rounded-full ${config.bgColor}`} />
           {config.label}
-          <ChevronDown className="size-3 opacity-50" />
+          <ChevronDown className={`${chevronSize} opacity-50`} />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()} className="min-w-[140px]">

@@ -73,17 +73,17 @@ export default async function HomePage() {
               </p>
             </div>
           ) : (
-            <div className="space-y-3">
-              {links.slice(0, 10).map((link, index) => (
+            <div className="space-y-2">
+              {links.slice(0, 3).map((link, index) => (
                 <article
                   key={link.id}
-                  className="bg-[#FAFAFA] border border-[#EBEBEB] rounded-lg p-4 transition-all duration-200 hover:shadow-[0_2px_8px_rgba(0,0,0,0.04)] group animate-in fade-in slide-in-from-bottom-2"
+                  className="bg-[#FAFAFA] border border-[#EBEBEB] rounded-lg p-3 transition-all duration-200 hover:shadow-[0_2px_8px_rgba(0,0,0,0.04)] group animate-in fade-in slide-in-from-bottom-2"
                   style={{ animationDelay: `${index * 50}ms`, animationDuration: "300ms", animationFillMode: "both" }}
                 >
-                  <div className="flex items-start gap-3">
+                  <div className="flex items-start gap-2.5">
                     <LinkFavicon url={link.url} />
 
-                    <div className="flex-1 min-w-0 space-y-1.5">
+                    <div className="flex-1 min-w-0 space-y-1">
                       <LinkOpener
                         linkId={link.id}
                         url={link.url}
@@ -94,31 +94,31 @@ export default async function HomePage() {
                           linkId={link.id}
                           title={link.title}
                           url={link.url}
-                          className="text-[1.0625rem] font-semibold leading-snug text-balance text-foreground group-hover:text-primary transition-colors"
+                          className="text-[0.9375rem] font-semibold leading-snug text-balance text-foreground group-hover:text-primary transition-colors"
                         />
                       </LinkOpener>
 
-                      <div className="flex items-center gap-2 text-[0.75rem] text-[#6b7280] font-normal">
+                      <div className="flex items-center gap-2 text-[0.6875rem] text-[#6b7280] font-normal">
                         <span>{hostname(link.url)}</span>
                         <span>·</span>
                         <span>{formatDate(link.createdAt)}</span>
                       </div>
 
                       {link.synopsis && (
-                        <p className="text-[0.875rem] leading-relaxed text-[#666666] font-normal line-clamp-2">
+                        <p className="text-[0.8125rem] leading-relaxed text-[#666666] font-normal line-clamp-1">
                           {link.synopsis.length > 120 ? `${link.synopsis.slice(0, 120)}...` : link.synopsis}
                         </p>
                       )}
                     </div>
 
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                      <StatusSelector linkId={link.id} currentStatus={link.status} />
-                      <div className="flex items-center gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-200">
+                    <div className="flex items-center gap-1.5 flex-shrink-0">
+                      <StatusSelector linkId={link.id} currentStatus={link.status} size="sm" />
+                      <div className="flex items-center gap-1.5 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-200">
                         <div className="text-[#999999] hover:text-[#333333] transition-colors">
-                          <ShareButton url={link.url} title={link.title} variant="icon" />
+                          <ShareButton url={link.url} title={link.title} variant="icon" size="sm" />
                         </div>
                         <div className="text-[#999999] hover:text-[#333333] transition-colors">
-                          <DeleteLinkButton linkId={link.id} variant="icon" />
+                          <DeleteLinkButton linkId={link.id} variant="icon" size="sm" />
                         </div>
                       </div>
                     </div>
