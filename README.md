@@ -4,6 +4,8 @@
 
 🔗 **Live:** [readlaterhq.vercel.app](https://readlaterhq.vercel.app)
 
+![ReadLater Screenshot](screenshot.png)
+
 ## Features
 
 - **Save links instantly** — No sign-up required, works immediately
