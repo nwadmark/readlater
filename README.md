@@ -4,7 +4,7 @@
 
 🔗 **Live:** [readlaterhq.vercel.app](https://readlaterhq.vercel.app)
 
-![ReadLater Screenshot](screenshot.png)
+![ReadLater Screenshot](screenshop.png)
 
 ## Features
 
